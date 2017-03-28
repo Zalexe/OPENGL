@@ -1,0 +1,25 @@
+#version 330 core
+
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 position;
+uniform float time;
+out vec3 posFrag;
+out vec3 orgPosFrag;
+out mat3 Trans;
+void main(){
+
+	orgPosFrag.xyz = position.xyz;
+    gl_Position.xyz = position;
+    gl_Position.w = 1.0;
+	if(gl_Position.y<0){
+	if(gl_Position.x<0)
+		gl_Position.x = position.x-((abs(sin(time)))/2);
+	else
+		gl_Position.x = position.x+((abs(sin(time)))/2);
+
+		}
+			posFrag = gl_Position.xyz;
+
+//posFragMov.xyz = gl_Position.xyz;
+}
+

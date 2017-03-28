@@ -1,0 +1,27 @@
+#version 330 core
+
+// Ouput data
+out vec3 color;
+in vec3 posFrag;
+//in vec3 posFragMov;
+
+void main()
+{
+		// Output color = green; 
+		
+		//Degradado azul hacia arriba
+		//color = vec3(0,1,(posFrag.y+0.5)/(0.5+0.5));
+		
+		//Degradado rojo en los laterales
+		
+		if(abs(posFrag.r)> 0.5){
+			color = vec3(abs(((abs(posFrag.r)-0.5)/(1-0.5))),1- abs(((abs(posFrag.r)-0.5)/(1-0.5))),0);
+		}
+		
+		else{
+		color = vec3(0,1,0);
+		}
+		
+		color.b = (posFrag.g+0.5)/(0.5+0.5);
+		
+}
