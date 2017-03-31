@@ -20,7 +20,6 @@ float mixStuff;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 
-mat3 Matriz;
 
 void DrawVao(GLuint programID, GLuint VAO) {
 	//establecer el shader
