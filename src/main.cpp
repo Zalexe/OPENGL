@@ -12,14 +12,16 @@
 
 using namespace std;
 using namespace glm;
-
 const GLint WIDTH = 800, HEIGHT = 600;
 bool WIDEFRAME = false;
 bool paintQuad = false;
+bool fade1 = false;
 float mixStuff;
+float rotacionX, rotacionY = 0.0f;
+float gradosRot = 0;
+float aumentoRot;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
-
-
+bool aumentarRotRight, aumentarRotLeft, aumentarUp, aumentarDown;
 
 void DrawVao(GLuint programID, GLuint VAO) {
 	//establecer el shader
@@ -37,7 +39,14 @@ void DrawVao(GLuint programID, GLuint VAO) {
 	}
 
 }
+mat4 GenerateModelMatrix(vec3 aTranslation, vec3 aRotation, vec3 CubesPosition, float aRot) {
+	mat4 temp;
+	temp = translate(temp, aTranslation);
+	temp = translate(temp, CubesPosition);
+	temp = rotate(temp, radians(aRot), aRotation);
 
+	return temp;
+}
 void main() {
 	mixStuff = 0.0f;
 	//initGLFW
@@ -121,15 +130,70 @@ void main() {
 	//	-0.5f,  0.5f, 0.0f   // Top Left 
 	//};
 
+	//GLfloat VertexBufferObject[] = {
+	//	// Positions          // Colors           // Texture Coords
+	//	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+	//	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+	//	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+	//	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
+	//};
+
 	GLfloat VertexBufferObject[] = {
-		// Positions          // Colors           // Texture Coords
-		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
-		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f , -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f ,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f ,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f , -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f , -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f , -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f , -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f , -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f ,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f ,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-
+	vec3 CubePos[] = {
+		vec3(0.0f ,  0.0f,  0.0f),
+		vec3(2.0f ,  5.0f, -15.0f),
+		vec3(-1.5f, -2.2f, -2.5f),
+		vec3(-3.8f, -2.0f, -12.3f),
+		vec3(2.4f , -0.4f, -3.5f),
+		vec3(-1.7f,  3.0f, -7.5f),
+		vec3(1.3f , -2.0f, -2.5f),
+		vec3(1.5f ,  2.0f, -2.5f),
+		vec3(1.5f ,  0.2f, -1.5f),
+		vec3(-1.3f,  1.0f, -1.5f)
+	};
 	//Numbuffer = cantidad de buffers a generar;
 
 	//Borrado
@@ -142,11 +206,11 @@ void main() {
 	//GLuint IndexBufferObject[]{
 	//	0,1,2,
 	//	1,3,0 };
-	GLuint IndexBufferObject[]{
-		2,0,3,
-		2,1,0
+	//GLuint IndexBufferObject[]{
+	//	2,0,3,
+	//	2,1,0
 
-	};
+	//};
 	//-EBO
 
 
@@ -165,9 +229,9 @@ void main() {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_DYNAMIC_DRAW);
 
 
-		glGenBuffers(1, &EBO);
+		/*glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexBufferObject), IndexBufferObject, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndexBufferObject), IndexBufferObject, GL_DYNAMIC_DRAW);*/
 
 
 		//Propiedades
@@ -215,7 +279,7 @@ void main() {
 	GLuint texture1, texture2;
 
 
-
+	GLint matrizDefID;
 
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
@@ -247,6 +311,9 @@ void main() {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	aumentoRot = 0.05f;
+
+	glEnable(GL_DEPTH_TEST);
 
 	//bucle de dibujado
 	while (!glfwWindowShouldClose(window))
@@ -260,8 +327,22 @@ void main() {
 		glUniform1f(loc, glfwGetTime());
 		}*/
 
+		//mat4 finalMatrix; //Modelo
+		mat4 cam; //Vista
+		mat4 proj; //Proyeccion
+
+
+		if (gradosRot > 360 || gradosRot < -360) {
+			gradosRot = 0;
+		}
+
 		glfwPollEvents();
 
+		
+		matrizDefID = glGetUniformLocation(shader.Program, "matrizDefinitiva");
+
+		//Establecer el color de fondo
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 		//Establecer el color de fondo
@@ -298,7 +379,62 @@ void main() {
 
 		
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	
+
+		if (aumentarRotLeft) {
+			rotacionY -= aumentoRot;
+		}
+		else if (aumentarRotRight) {
+			rotacionY += aumentoRot;
+		}
+
+		if (aumentarUp) {
+			rotacionX -= aumentoRot;
+		}
+		else if (aumentarDown) {
+			rotacionX += aumentoRot;
+		}
+
+		if (fade1) {
+			if (mixStuff >= 0 && mixStuff<1) {
+				mixStuff += 0.01f;
+			}
+		}
+		else {
+			if (mixStuff>0.01f) {
+				mixStuff -= 0.01f;
+			}
+		}
+
+		float FOV = 45.0f;
+
+		proj = perspective(FOV, (float)(800 / 600), 0.1f, 100.0f);
+
+		cam = translate(cam, vec3(0.0f, 0.0f, -3.0f));
+		
+
+		for (int i = 0; i < 10; i++) {
+			mat4 matrix;
+			if (i == 0) {
+				matrix = translate(matrix, CubePos[0]);
+				matrix = rotate(matrix, radians(rotacionX), vec3(1, 0, 0));
+				matrix = rotate(matrix, radians(rotacionY), vec3(0, 1, 0));
+			}
+			else {
+				float rotot = glfwGetTime() * 100;
+				rotot = (int)rotot % 360;
+				matrix = GenerateModelMatrix(vec3(0.0f), vec3(1, 0.5f, 0), CubePos[i], rotot);
+			}
+			
+
+			mat4 finalMatrix;
+
+			finalMatrix = proj*cam*matrix;
+
+			glUniformMatrix4fv(matrizDefID, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 		
 		
@@ -333,16 +469,39 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	if (key == GLFW_KEY_UP&&action == GLFW_PRESS) {
-		if (mixStuff<1)		mixStuff += 0.1f;
+		aumentarUp = true;
 	}
+
+	if (key == GLFW_KEY_UP&&action == GLFW_RELEASE) {
+		aumentarUp = false;
+	}
+
 	if (key == GLFW_KEY_DOWN&&action == GLFW_PRESS) {
-		if (mixStuff>0.1)		mixStuff -= 0.1f;
+		aumentarDown = true;
+	}
+
+	if (key == GLFW_KEY_DOWN&&action == GLFW_RELEASE) {
+		aumentarDown = false;
 	}
 
 	if (key == GLFW_KEY_RIGHT&&action == GLFW_PRESS) {
-		//Matriz= glm::rotate(Matriz,90.0f,vec3(1.0,0.0,0.0));
+		aumentarRotRight = true;
 	}
+	else if (key == GLFW_KEY_RIGHT&&action == GLFW_RELEASE) {
+		aumentarRotRight = false;
+	}
+
 	if (key == GLFW_KEY_LEFT&&action == GLFW_PRESS) {
-		//Matriz= glm::rotate(Matriz, -90.0f, vec3(1.0, 0.0, 0.0));
+		aumentarRotLeft = true;
+	}
+	else if (key == GLFW_KEY_LEFT&&action == GLFW_RELEASE) {
+		aumentarRotLeft = false;
+	}
+
+	if (key == GLFW_KEY_1&&action == GLFW_PRESS) {
+		fade1 = true;
+	}
+	else if (key == GLFW_KEY_2&&action == GLFW_PRESS) {
+		fade1 = false;
 	}
 }
