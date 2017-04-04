@@ -10,6 +10,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
+
 using namespace std;
 using namespace glm;
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -236,17 +237,14 @@ void main() {
 
 		//Propiedades
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glVertexAttribPointer(1, 0, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
 		glEnableVertexAttribArray(1);
 
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GL_FLOAT), (GLvoid*)(6 * sizeof(GL_FLOAT)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
 		glEnableVertexAttribArray(2);
-
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 8 *3 * sizeof(GL_FLOAT), (GLvoid*)(6 *3* sizeof(GL_FLOAT)));
-		glEnableVertexAttribArray(3);
 
 
 		//LIMPIA LOS BUFFERS DE VERTICES
@@ -351,10 +349,10 @@ void main() {
 
 		GLint locTex = glGetUniformLocation(shader.Program, "ourTexture");
 		GLint locTex2 = glGetUniformLocation(shader.Program, "ourTexture2");
-		GLint loc = glGetUniformLocation(shader.Program, "mixStuff");
+		GLint mixID = glGetUniformLocation(shader.Program, "mixStuff");
 		shader.USE();
 		
-		glUniform1f(loc, mixStuff);
+		glUniform1f(mixID, mixStuff);
 
 
 		//glClearColor(0, 1, 0, 0);
@@ -441,7 +439,7 @@ void main() {
 		//pintar con lineas
 		//pintar con triangulos
 
-
+		glBindVertexArray(0);
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
@@ -468,40 +466,40 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		paintQuad = !paintQuad;
 	}
 
-	if (key == GLFW_KEY_UP&&action == GLFW_PRESS) {
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
 		aumentarUp = true;
 	}
 
-	if (key == GLFW_KEY_UP&&action == GLFW_RELEASE) {
+	if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
 		aumentarUp = false;
 	}
 
-	if (key == GLFW_KEY_DOWN&&action == GLFW_PRESS) {
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
 		aumentarDown = true;
 	}
 
-	if (key == GLFW_KEY_DOWN&&action == GLFW_RELEASE) {
+	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 		aumentarDown = false;
 	}
 
-	if (key == GLFW_KEY_RIGHT&&action == GLFW_PRESS) {
+	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
 		aumentarRotRight = true;
 	}
 	else if (key == GLFW_KEY_RIGHT&&action == GLFW_RELEASE) {
 		aumentarRotRight = false;
 	}
 
-	if (key == GLFW_KEY_LEFT&&action == GLFW_PRESS) {
+	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 		aumentarRotLeft = true;
 	}
-	else if (key == GLFW_KEY_LEFT&&action == GLFW_RELEASE) {
+	else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
 		aumentarRotLeft = false;
 	}
 
-	if (key == GLFW_KEY_1&&action == GLFW_PRESS) {
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		fade1 = true;
 	}
-	else if (key == GLFW_KEY_2&&action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		fade1 = false;
 	}
 }
