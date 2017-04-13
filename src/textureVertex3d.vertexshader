@@ -1,0 +1,19 @@
+#version 330 core
+
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec3 col;
+layout(location = 2) in vec2 tex;
+
+out vec2 TexCoord;
+
+//uniform mat4 matrizModel;
+//uniform mat4 matrizProj;
+//uniform mat4 matrizView;
+uniform mat4 matrizDefinitiva;
+
+void main(){
+	
+	gl_Position = matrizDefinitiva*(vec4((pos),1));
+	TexCoord = tex;
+	
+}
