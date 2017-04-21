@@ -99,7 +99,7 @@ void main() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//fondo
-	glClearColor(1.0,0.0, 1.0, 1.0);
+	glClearColor(0.6, 0.4, 0.3, 1.0);
 
 
 	//TODO
@@ -242,8 +242,8 @@ void main() {
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 0, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
-		glEnableVertexAttribArray(1);
+		/*glVertexAttribPointer(1, 0, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);*/
 
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
 		glEnableVertexAttribArray(2);
@@ -412,20 +412,19 @@ void main() {
 
 		cam = translate(cam, vec3(0.0f, 0.0f, -3.0f));
 		
-
 		for (int i = 0; i < 10; i++) {
 			mat4 matrix;
 			if (i == 0) {
 				matrix = translate(matrix, CubePos[0]);
-				matrix = rotate(matrix, radians(rotacionX), vec3(1, 0, 0));
-				matrix = rotate(matrix, radians(rotacionY), vec3(0, 1, 0));
+				matrix = rotate(matrix, radians(rotacionX), vec3(1,0,0));
+				matrix = rotate(matrix, radians(rotacionY),vec3(0,1,0));
 			}
 			else {
 				float rotot = glfwGetTime() * 100;
 				rotot = (int)rotot % 360;
 				matrix = GenerateModelMatrix(vec3(0.0f), vec3(1, 0.5f, 0), CubePos[i], rotot);
 			}
-			
+			//glUniformMatrix4fv(matModelID, 1, GL_FALSE, glm::value_ptr(matriz));
 
 			mat4 finalMatrix;
 
