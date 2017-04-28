@@ -9,9 +9,9 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-#include "..\Model.cpp"
-#include "..\Mesh.cpp"
-
+//#include "..\Model.cpp"
+//#include "..\Mesh.cpp"
+//#include "..\src\spider"
 
 using namespace glm;
 using namespace std;

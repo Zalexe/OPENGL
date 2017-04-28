@@ -12,6 +12,7 @@ Mesh::Mesh(vector<Vertex> vert, vector<GLuint> ind, vector<Texture> text){
 }
 
 void Mesh::setupMesh(){
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -34,6 +35,10 @@ void Mesh::setupMesh(){
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
 
 	}glBindVertexArray(0);
+}
+int Mesh::size() {
+
+	return vertices.size();
 }
 
 void Mesh::Draw(Shader MeshShader, GLint DrawMode) {
