@@ -4,7 +4,7 @@
 //GLFW
 #include <GLFW\glfw3.h>
 #include <iostream>
-#include "..\Shader.h"
+#include "Shader.h"
 #include <SOIL.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
