@@ -9,8 +9,8 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-//#include "..\Model.cpp"
-//#include "..\Mesh.cpp"
+#include "Model.h"
+#include "Mesh.h"
 //#include "..\src\spider"
 
 using namespace glm;
@@ -25,6 +25,11 @@ float rotacionX = -90.0f;
 float gradosRot = 0;
 float aumentoRot;
 bool aumentarRotRight, aumentarRotLeft, aumentarUp, aumentarDown;
+
+
+Model ourModel1,ourModel2,ourModel3; 
+bool model1 = true; bool model2 = false; bool model3 = false;
+
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_callback(GLFWwindow* window, double xPos, double yPos);
@@ -340,15 +345,7 @@ void main() {
 
 	vec3 CubesPositionBuffer[] = {
 		vec3(0.0f ,  0.0f,  0.0f),
-		vec3(2.0f ,  5.0f, -15.0f),
-		vec3(-1.5f, -2.2f, -2.5f),
-		vec3(-3.8f, -2.0f, -12.3f),
-		vec3(2.4f , -0.4f, -3.5f),
-		vec3(-1.7f,  3.0f, -7.5f),
-		vec3(1.3f , -2.0f, -2.5f),
-		vec3(1.5f ,  2.0f, -2.5f),
-		vec3(1.5f ,  0.2f, -1.5f),
-		vec3(-1.3f,  1.0f, -1.5f)
+	
 	};
 
 
@@ -464,7 +461,10 @@ void main() {
 	glEnable(GL_DEPTH_TEST);
 	
 
-
+	//cargar modelos
+	ourModel1.loadModel("./src/spider/spider.obj");
+	ourModel2.loadModel("./src/nanosuit/nanosuit.obj");
+	ourModel3.loadModel("./src/casa/Casa.obj");
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -479,7 +479,7 @@ void main() {
 		}
 
 		glfwPollEvents();
-
+		
 		matrizDefID = glGetUniformLocation(shader.Program, "matrizDefinitiva");
 
 		//Establecer el color de fondo
@@ -535,28 +535,40 @@ void main() {
 
 		cam = camara.LookAt();
 
-		for (int i = 0; i < 10; i++) {
+		
 			//Model Matrix
+		
 			mat4 modelMatrix;
-			if (i == 0) {
+			
 				modelMatrix = translate(modelMatrix, CubesPositionBuffer[0]);
-				modelMatrix = rotate(modelMatrix, radians(rotacionX), vec3(1, 0, 0));
-				modelMatrix = rotate(modelMatrix, radians(rotacionY), vec3(0, 1, 0));
-			}
-			else {
-				float rotot = glfwGetTime() * 100;
-				rotot = (int)rotot % 360;
-				modelMatrix = GenerateModelMatrix(vec3(0.0f), vec3(1, 0.5f, 0), CubesPositionBuffer[i], rotot);
-			}
+				
+				modelMatrix = glm::scale(modelMatrix, glm::vec3(0.02f, 0.02f, 0.02f));
+			
 
 			mat4 matrizDefinitiva;
 
 			matrizDefinitiva = proj*camara.LookAt()*modelMatrix;
 
+			//load cube/model
+
+
 			glUniformMatrix4fv(matrizDefID, 1, GL_FALSE, glm::value_ptr(matrizDefinitiva));
 
+			if (model1) {
+
+				ourModel1.Draw(shader, VBO);
+			}
+			else if (model2) {
+
+				ourModel2.Draw(shader, VBO);
+			}
+			else if (model3) {
+
+				ourModel3.Draw(shader, VBO);
+			}
+
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		
 		glBindVertexArray(0);
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
@@ -567,6 +579,7 @@ void main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	
 	//glDeleteBuffers(1, &EBO);
 
 	glfwDestroyWindow(window);
@@ -645,11 +658,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		aumentarRotLeft = false;
 	}
 
+
 	if (key == GLFW_KEY_1&&action == GLFW_PRESS) {
-		fade1 = true;
+		model1 = true;
+		model2 = false;
+		model3 = false;
+		
 	}
 	else if (key == GLFW_KEY_2&&action == GLFW_PRESS) {
-		fade1 = false;
+		 
+		model1 = false;
+		model2 =true;
+		model3 = false;
+	}
+	else if (key == GLFW_KEY_3&&action == GLFW_PRESS) {
+		 
+		model1 = false;
+		model2 = false;
+		model3 = true;
 	}
 
 }

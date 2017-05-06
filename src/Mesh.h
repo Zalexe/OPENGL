@@ -8,7 +8,7 @@
 
 #include <gtc\matrix_transform.hpp>
 #include <glm.hpp>
-#include <..\include\assimp\types.h>
+#include <assimp\types.h>
 
 using namespace std;
 using namespace glm;
