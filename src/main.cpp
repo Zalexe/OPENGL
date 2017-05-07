@@ -11,7 +11,8 @@
 #include <gtc/type_ptr.hpp>
 #include "Model.h"
 #include "Mesh.h"
-//#include "..\src\spider"
+
+#include "Object.h"
 
 using namespace glm;
 using namespace std;
@@ -27,9 +28,12 @@ float aumentoRot;
 bool aumentarRotRight, aumentarRotLeft, aumentarUp, aumentarDown;
 
 
-Model ourModel1,ourModel2,ourModel3; 
-bool model1 = true; bool model2 = false; bool model3 = false;
+//Model ourModel1,ourModel2,ourModel3; 
+//bool model1 = true; bool model2 = false; bool model3 = false;
 
+vec3 scal(0.1, 0.1, 0.1); vec3 rot(0, 0, 0); vec3 pos(0, 0, 0); Object::FigureType type; 
+Object cubeA(scal,rot,pos,type);
+Object cubeB(scal, rot, pos,type);
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_callback(GLFWwindow* window, double xPos, double yPos);
@@ -287,7 +291,7 @@ void main() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//fondo
-	glClearColor(0.0, 1.0, 1.0, 1.0); //color del fondo de la pantalla
+	glClearColor(0.0, 0.0, 0.0, 0.0); //color del fondo de la pantalla
 
 
 	//TODO
@@ -295,7 +299,7 @@ void main() {
 
 	
 
-	Shader shader = Shader("./src/textureVertex3d.vertexshader", "./src/textureFragment3d.fragmentshader");
+	Shader shader = Shader("./src/objectVertexShader.vertexshader", "./src/objectFragmentShader.fragmentshader");
 
 	
 
@@ -370,34 +374,28 @@ void main() {
 
 	// Crear los VBO, VAO y EBO
 
-	GLuint VAO, /*EBO,*/ VBO;
+	GLuint VAO, EBO, VBO;
 	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
 	glBindVertexArray(VAO); {
-
-		glGenBuffers(1, &VBO);
-		//Se enlaza el buffer para poder usarlo
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		//Se pasan los datos
-		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), VertexBufferObject, GL_DYNAMIC_DRAW);
+		
+		
+			glBufferData(GL_ARRAY_BUFFER, sizeof(VertexBufferObject), &VertexBufferObject[0], GL_STATIC_DRAW);
 
+			//posiciones
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+			//normales
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 
-	
-
-		//Propiedades
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)0);
-		glEnableVertexAttribArray(0);
-
-		/*glVertexAttribPointer(1, 0, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
-		glEnableVertexAttribArray(1);*/
-
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GL_FLOAT)));
-		glEnableVertexAttribArray(2);
-
-		//LIMPIA LOS BUFFERS DE VERTICES
+		
+		
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	}glBindVertexArray(0);
 
 
@@ -462,9 +460,9 @@ void main() {
 	
 
 	//cargar modelos
-	ourModel1.loadModel("./src/spider/spider.obj");
+	/*ourModel1.loadModel("./src/spider/spider.obj");
 	ourModel2.loadModel("./src/nanosuit/nanosuit.obj");
-	ourModel3.loadModel("./src/casa/Casa.obj");
+	ourModel3.loadModel("./src/casa/Casa.obj");*/
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -542,19 +540,22 @@ void main() {
 			
 				modelMatrix = translate(modelMatrix, CubesPositionBuffer[0]);
 				
-				modelMatrix = glm::scale(modelMatrix, glm::vec3(0.02f, 0.02f, 0.02f));
+				//modelMatrix = glm::scale(modelMatrix, glm::vec3(0.02f, 0.02f, 0.02f));
 			
 
 			mat4 matrizDefinitiva;
 
 			matrizDefinitiva = proj*camara.LookAt()*modelMatrix;
 
-			//load cube/model
-
-
+			
 			glUniformMatrix4fv(matrizDefID, 1, GL_FALSE, glm::value_ptr(matrizDefinitiva));
 
-			if (model1) {
+
+			cubeA.Draw();
+			cubeB.Draw();
+
+			//wich model to draw
+		/*	if (model1) {
 
 				ourModel1.Draw(shader, VBO);
 			}
@@ -566,8 +567,8 @@ void main() {
 
 				ourModel3.Draw(shader, VBO);
 			}
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+*/
+			//glDrawArrays(GL_TRIANGLES, 0, 36);
 		
 		glBindVertexArray(0);
 		// Swap the screen buffers
@@ -580,7 +581,7 @@ void main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	
-	//glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &EBO);
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -659,7 +660,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 
-	if (key == GLFW_KEY_1&&action == GLFW_PRESS) {
+	/*if (key == GLFW_KEY_1&&action == GLFW_PRESS) {
 		model1 = true;
 		model2 = false;
 		model3 = false;
@@ -677,5 +678,5 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		model2 = false;
 		model3 = true;
 	}
-
+*/
 }
